@@ -2,19 +2,44 @@ class Hornsby
   @@record_name_fields = %w( name title username login )
   @@delete_sql = "DELETE FROM %s"
   
-  if const_defined?(:RAILS_ROOT)
-    FRAMEWORK_ROOT = RAILS_ROOT
-  elsif const_defined?(:Merb)
-    FRAMEWORK_ROOT = Merb.root
+  def self.framework_root
+    if const_defined?(:RAILS_ROOT)
+      puts "rails root"
+      RAILS_ROOT
+    elsif const_defined?(:Merb)
+      puts "merb"
+      Merb.root
+    elsif const_defined?('Rails')
+      Rails.root
+    end
   end
   
   cattr_reader :scenarios
   @@scenarios = {}
+  cattr_reader :global_scenarios
   # @@namespaces = {}
+
+  def self.configure_rspec(config, options = {})
+    load(options[:filename])
+
+    @@global_scenarios = Hornsby.build(options[:scenarios]) if options[:scenarios]
+
+    config.include(HornsbySpecHelper)
+
+    config.before do
+      @@global_scenarios.each {|s| s.copy_ivars(self)} if @@global_scenarios
+      ActiveRecord::Base.connection.increment_open_transactions
+      ActiveRecord::Base.connection.transaction_joinable = false
+      ActiveRecord::Base.connection.begin_db_transaction
+    end
+
+    config.after do
+      ActiveRecord::Base.connection.rollback_db_transaction
+      ActiveRecord::Base.connection.decrement_open_transactions
+    end
+  end
   
   def self.build(*names)
-    delete_tables
-    
     scenarios = names.map {|name| @@scenarios[name.to_sym] or raise "scenario #{name} not found"}
     
     scenarios.each {|s| s.build}
@@ -24,10 +49,10 @@ class Hornsby
   end
   
   def self.load(scenarios_file=nil)
+    delete_tables
     return unless @@scenarios.empty?
-    
-    scenarios_file ||= FRAMEWORK_ROOT+'/spec/hornsby_scenarios.rb'
-    
+
+    scenarios_file ||= framework_root + '/spec/hornsby_scenarios.rb'
     self.module_eval File.read(scenarios_file)
   end
   
@@ -132,17 +157,11 @@ class Hornsby
       to.instance_variable_set(iv, @context.instance_variable_get(iv))
     end
   end
-  
-  
 end
 
 
 module HornsbySpecHelper
   def hornsby_scenario(*names)
     Hornsby.build(*names).each {|s| s.copy_ivars(self)}
-  end
-  
-  def before
-    puts "hornessbey, before"
   end
 end

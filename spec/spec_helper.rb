@@ -14,3 +14,4 @@ FileUtils::rm(RAILS_ROOT+"/"+db_info[:dbfile])
 ActiveRecord::Base.establish_connection(db_info)
 
 load(File.join(plugin_spec_dir, "db", "schema.rb"))
+

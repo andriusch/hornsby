@@ -1,92 +1,101 @@
 = Hornsby
+
 A Scenario Builder without the fixture pain.
 
 == Usage
 
 Scenarios look like:
 
-  scenario :apple do
-    @apple = Fruit.create! :species => 'apple'
-  end
+    scenario :apple do
+      @apple = Fruit.create! :species => 'apple'
+    end
 
-  scenario :orange do
-    @orange = Fruit.create! :species => 'orange'
-  end
+    scenario :orange do
+      @orange = Fruit.create! :species => 'orange'
+    end
 
-  scenario :fruitbowl => [:apple,:orange] do
-    @fruitbowl = FruitBowl.create! :fruit => [@apple,@orange]
-  end
+    scenario :fruitbowl => [:apple,:orange] do
+      @fruitbowl = FruitBowl.create! :fruit => [@apple,@orange]
+    end
 
-  scenario :kitchen => :fruitbowl do
-    @kitchen = Kitchen.create! :fruitbowl => @fruitbowl
-  end
+    scenario :kitchen => :fruitbowl do
+      @kitchen = Kitchen.create! :fruitbowl => @fruitbowl
+    end
 
 ...and you use them in specs like:
 
-  describe Fruit, "@apple" do
-    before do
-      hornsby_scenario :apple
-    end
+    describe Fruit, "@apple" do
+      before do
+        hornsby_scenario :apple
+      end
   
-    it "should be an apple" do
-      @apple.species.should == 'apple'
+      it "should be an apple" do
+        @apple.species.should == 'apple'
+      end
     end
-  end
 
-  describe FruitBowl, "with and apple and an orange" do
-    before do
-      hornsby_scenario :fruitbowl
+    describe FruitBowl, "with and apple and an orange" do
+      before do
+        hornsby_scenario :fruitbowl
+      end
+
+      it "should have 2 fruits" do
+        @fruitbowl.should have(2).fruit
+      end
     end
-  
-    it "should have 2 fruits" do
-      @fruitbowl.should have(2).fruit
-    end
-  end
 
 == Setup
 
 Install the plugin:
 
-  ./script/plugin install git://github.com/lachie/hornsby.git
+    ./script/plugin install git://github.com/lachie/hornsby.git
 
 Add the following to spec_helper.rb
 
-  # by default this loads scenarios from RAILS_ROOT/spec/hornsby_scenarios.rb
-  Hornsby.load
-
-  Spec::Runner.configure do |config|
-    ...
+    # by default this loads scenarios from RAILS_ROOT/spec/hornsby_scenarios.rb
+    Spec::Runner.configure do |config|
+      ...
   
-    config.include(HornsbySpecHelper)
-  end
+      Hornsby.configure_rspec(config, :filename => 'scenarios.rb', :scenarios => :preloaded_scenario)
+    end
+
+configure_rspec supports two parameters:
+* filename - file with hornsby scenarios
+* scenarios - list of hornsby scenarios that should be preloaded (available in all tests, never reloaded so they're much faster)
 
 
 == Advanced Usage
 
 Its just ruby, right? So go nuts:
 
-  1.upto(9) do |i|
-    scenario("user_#{i}") do
-      user = User.create! :name => "user#{i}"
-      instance_variable_set("@user_#{i}",user)
+    1.upto(9) do |i|
+      scenario("user_#{i}") do
+        user = User.create! :name => "user#{i}"
+        instance_variable_set("@user_#{i}",user)
+      end
     end
-  end
+
+== Transactions
+
+Hornsby scenarios is transactional, meaning that after every test transaction is dropped and database is reset to
+starting point. Starting point is empty database + any scenarios that you specify in configure_rspec.
 
 == Rake
 
 If you'd like simply to load your scenarios into a database, use the rake task like so:
 
-  $ rake hornsby:scenario RAILS_ENV=test SCENARIO=fruitbowl
+    $ rake hornsby:scenario RAILS_ENV=test SCENARIO=fruitbowl
 
 == TODO
 
-* Make transactional for speed.
 * Add scenario namespaces for better organisation.
 * Detect scenario cycles.
 
 == Credits
 
 Lachie Cox <lachie@smartbomb.com.au>
+
+Andrius Chamentauskas <sinsiliux@gmail.com>
 
 The code is based on Err's code found in this post: http://errtheblog.com/post/7708
 

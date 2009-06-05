@@ -36,7 +36,7 @@ end
 
 describe Hornsby, "with just_apple scenario" do
   before do
-    Hornsby.build(:just_apple).copy_ivars(self)
+    Hornsby.build(:just_apple).each {|s| s.copy_ivars(self)}
   end
   
   it "should create @apple" do
@@ -58,7 +58,7 @@ end
 
 describe Hornsby, "with bananas_and_apples scenario" do
   before do
-    Hornsby.build(:bananas_and_apples).copy_ivars(self)
+    Hornsby.build(:bananas_and_apples).each {|s| s.copy_ivars(self)}
   end
   
   it "should have correct @apple species" do
@@ -72,7 +72,7 @@ end
 
 describe Hornsby, "with fruit scenario" do
   before do
-    Hornsby.build(:fruit).copy_ivars(self)
+    Hornsby.build(:fruit).each {|s| s.copy_ivars(self)}
   end
 
   it "should have 2 fruits" do
