@@ -70,20 +70,27 @@ describe Hornsby, 'with preloaded cherry scenario' do
     @cherry.update_attribute(:average_diameter, 5)
     @cherry.average_diameter.should == 5
   end
+
+  it "should create big cherry" do
+    @big_cherry.species.should == 'cherry'
+  end
 end
 
 describe Hornsby, 'with many apples scenario' do
   before do
-    hornsby_scenario :many_apples, :cherry
+    hornsby_scenario :many_apples, :cherry, :cherry_basket
   end
 
   it "should create only one apple" do
-    puts Hornsby.send(:class_variable_get, :@@executed_scenarios).inspect
     Fruit.all(:conditions => 'species = "apple"').count.should == 1
   end
 
-  it "should create only one cherry even if it was preloaded" do
-    Fruit.all(:conditions => 'species = "cherry"').count.should == 1
+  it "should create only two cherries even if they were preloaded" do
+    Fruit.all(:conditions => 'species = "cherry"').count.should == 2
+  end
+
+  it "should contain cherries in basket if basket is loaded in test and cherries preloaded" do
+    @basket.should == [@cherry, @big_cherry]
   end
 end
 

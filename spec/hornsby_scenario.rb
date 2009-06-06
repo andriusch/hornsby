@@ -25,6 +25,14 @@ scenario(:cherry) do
   @cherry = Fruit.create! :species => 'cherry', :average_diameter => 3
 end
 
+scenario(:big_cherry => :cherry) do
+  @big_cherry = Fruit.create! :species => @cherry.species, :average_diameter => 7
+end
+
+scenario(:cherry_basket => [:big_cherry, :cherry]) do
+  @basket = [@cherry, @big_cherry]
+end
+
 # Hornsby.namespace(:pitted_fruit) do
 #   scenario(:peach) do
 #     @peach = Fruit.create! :species => 'peach'

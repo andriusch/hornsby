@@ -1,5 +1,5 @@
 GEM_NAME = "hornsby"
-GEM_VERSION = "0.2.0"
+GEM_VERSION = "0.2.1"
 
 Gem::Specification.new do |s|
   s.name = GEM_NAME
