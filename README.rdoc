@@ -44,6 +44,9 @@ Scenarios look like:
       end
     end
 
+All scenarios are run only once, no matter how many times they were called, meaning that you don't need to worry about
+duplicating data.
+
 == Setup
 
 Install the plugin:
@@ -89,7 +92,6 @@ If you'd like simply to load your scenarios into a database, use the rake task l
 == TODO
 
 * Add scenario namespaces for better organisation.
-* Detect scenario cycles.
 
 == Credits
 

@@ -1,42 +1,8 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-class Fruit < ActiveRecord::Base
-end
-
-Hornsby.scenario(:just_apple) do
-  @apple = Fruit.create! :species => 'apple'
-end
-
-Hornsby.scenario(:bananas_and_apples => :just_apple) do
-  @banana = Fruit.create! :species => 'banana'
-end
-
-Hornsby.scenario(:just_orange) do
-  @orange = Fruit.create! :species => 'orange'
-end
-
-Hornsby.scenario(:fruit => [:just_apple,:just_orange]) do
-  @fruit = [@orange,@apple]
-end
-
-Hornsby.scenario(:bananas_and_apples_and_oranges => [:bananas_and_apples,:just_orange]) do
-  @fruit = [@orange,@apple,@banana]
-end
-
-
-# Hornsby.namespace(:pitted_fruit) do
-#   scenario(:peach) do
-#     @peach = Fruit.create! :species => 'peach'
-#   end
-#   
-#   scenario(:nectarine) do
-#     @nectarine = Fruit.create! :species => 'nectarine'
-#   end
-# end
-
 describe Hornsby, "with just_apple scenario" do
   before do
-    Hornsby.build(:just_apple).each {|s| s.copy_ivars(self)}
+    hornsby_scenario :just_apple
   end
   
   it "should create @apple" do
@@ -58,7 +24,7 @@ end
 
 describe Hornsby, "with bananas_and_apples scenario" do
   before do
-    Hornsby.build(:bananas_and_apples).each {|s| s.copy_ivars(self)}
+    hornsby_scenario :bananas_and_apples
   end
   
   it "should have correct @apple species" do
@@ -72,7 +38,7 @@ end
 
 describe Hornsby, "with fruit scenario" do
   before do
-    Hornsby.build(:fruit).each {|s| s.copy_ivars(self)}
+    hornsby_scenario :fruit
   end
 
   it "should have 2 fruits" do
@@ -89,6 +55,35 @@ describe Hornsby, "with fruit scenario" do
   
   it "should have no @banana" do
     @banana.should be_nil
+  end
+end
+
+describe Hornsby, 'with preloaded cherry scenario' do
+  it "should have correct size after changed by second test" do
+    @cherry.average_diameter.should == 3
+    @cherry.update_attribute(:average_diameter, 1)
+    @cherry.average_diameter.should == 1
+  end
+
+  it "should have correct size" do
+    @cherry.average_diameter.should == 3
+    @cherry.update_attribute(:average_diameter, 5)
+    @cherry.average_diameter.should == 5
+  end
+end
+
+describe Hornsby, 'with many apples scenario' do
+  before do
+    hornsby_scenario :many_apples, :cherry
+  end
+
+  it "should create only one apple" do
+    puts Hornsby.send(:class_variable_get, :@@executed_scenarios).inspect
+    Fruit.all(:conditions => 'species = "apple"').count.should == 1
+  end
+
+  it "should create only one cherry even if it was preloaded" do
+    Fruit.all(:conditions => 'species = "cherry"').count.should == 1
   end
 end
 
