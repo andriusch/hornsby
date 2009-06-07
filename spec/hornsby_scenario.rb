@@ -2,8 +2,7 @@ scenario(:just_apple) do
   @apple = Fruit.create! :species => 'apple'
 end
 
-scenario(:many_apples => [:just_apple, :just_apple, :just_apple]) do 
-end
+scenario(:many_apples => [:just_apple, :just_apple, :just_apple])
 
 scenario(:bananas_and_apples => :just_apple) do
   @banana = Fruit.create! :species => 'banana'

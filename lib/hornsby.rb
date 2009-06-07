@@ -53,7 +53,7 @@ class Hornsby
     return unless @@scenarios.empty?
 
     delete_tables
-    scenarios_file ||= framework_root + '/spec/hornsby_scenarios.rb'
+    scenarios_file ||= File.join(framework_root, 'spec', 'hornsby_scenarios.rb')
     self.module_eval File.read(scenarios_file)
   end
 
@@ -108,7 +108,7 @@ class Hornsby
   end
 
   def build_scenario(context)
-    surface_errors { context.execute(@@context == @@global_context, &@block) } unless @@executed_scenarios.include?(@scenario)
+    surface_errors { context.execute(&@block) } unless @@executed_scenarios.include?(@scenario)
     @@executed_scenarios << @scenario
   end
 
