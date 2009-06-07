@@ -49,13 +49,21 @@ duplicating data.
 
 == Setup
 
-Install the plugin:
+The easiest way to install this gem for Ruby on Rails is just add this line to config/environment.rb (or config/environments/test.rb):
 
-    ./script/plugin install git://github.com/lachie/hornsby.git
+    config.gem 'sinsiliux-hornsby', :lib => 'hornsby', :source => 'http://gems.github.com'
+
+If you’re not using rails, then you can install it through command line
+
+    gem sources -a http://gems.github.com
+    sudo gem install sinsiliux-hornsby
+
+Lastly you could use it as plugin:
+
+    ruby script/plugin install git://github.com/sinsiliux/hornsby.git
 
 Add the following to spec_helper.rb
 
-    # by default this loads scenarios from RAILS_ROOT/spec/hornsby_scenarios.rb
     Spec::Runner.configure do |config|
       ...
   
@@ -63,9 +71,8 @@ Add the following to spec_helper.rb
     end
 
 configure_rspec supports two parameters:
-* filename - file with hornsby scenarios
+* filename - file with hornsby scenarios (by default Rails.root/spec/hornsby_scenarios.rb)
 * scenarios - list of hornsby scenarios that should be preloaded (available in all tests, never reloaded so they're much faster)
-
 
 == Advanced Usage
 
