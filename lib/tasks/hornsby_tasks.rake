@@ -1,4 +1,4 @@
-require File.dirname(__FILE__)+'/../lib/hornsby'
+require File.dirname(__FILE__)+'/../hornsby'
 
 namespace :hornsby do
 
