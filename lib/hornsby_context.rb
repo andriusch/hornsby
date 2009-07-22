@@ -1,6 +1,6 @@
 module HornsbyContext
   def self.execute(&block)
-    module_exec(&block) if block
+    module_eval(&block) if block
   end
 
   def self.copy_ivars(to, reload = false)
