@@ -99,6 +99,26 @@ describe Hornsby, 'with many apples scenario' do
   end
 end
 
+describe Hornsby, 'transactions' do
+  before do
+    hornsby_scenario :just_apple
+  end
+
+  it "should drop only inner transaction" do
+    @apple.reload.should_not be_nil
+    begin
+      ActiveRecord::Base.transaction do
+        f = Fruit.create(:species => 'orange')
+        f.reload.should_not be_nil
+        raise 'some error'
+      end
+    rescue
+    end
+    @apple.reload.should_not be_nil
+    Fruit.find_by_species('orange').should be_nil
+  end
+end
+
 #describe Hornsby, "with pitted namespace" do
 #  before do
 #    Hornsby.build('pitted:peach').copy_ivars(self)
