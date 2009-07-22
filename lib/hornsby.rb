@@ -139,4 +139,8 @@ module HornsbySpecHelper
     Hornsby.build(*names)
     Hornsby.copy_ivars(self)
   end
+
+  def hornsby_clear
+    Hornsby.delete_tables
+  end
 end

@@ -74,6 +74,11 @@ describe Hornsby, 'with preloaded cherry scenario' do
   it "should create big cherry" do
     @big_cherry.species.should == 'cherry'
   end
+
+  it "should clear scenarios when calling hornsby_clear" do
+    hornsby_clear
+    Fruit.count.should == 0
+  end
 end
 
 describe Hornsby, 'with many apples scenario' do
@@ -82,11 +87,11 @@ describe Hornsby, 'with many apples scenario' do
   end
 
   it "should create only one apple" do
-    Fruit.all(:conditions => 'species = "apple"').count.should == 1
+    Fruit.all(:conditions => 'species = "apple"').size.should == 1
   end
 
   it "should create only two cherries even if they were preloaded" do
-    Fruit.all(:conditions => 'species = "cherry"').count.should == 2
+    Fruit.all(:conditions => 'species = "cherry"').size.should == 2
   end
 
   it "should contain cherries in basket if basket is loaded in test and cherries preloaded" do
