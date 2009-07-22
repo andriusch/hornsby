@@ -1,5 +1,9 @@
 require 'fileutils'
 require 'activerecord'
+begin
+  require 'mysqlplus'
+rescue LoadError
+end
 
 spec_dir = File.dirname(__FILE__)
 Dir.chdir spec_dir
