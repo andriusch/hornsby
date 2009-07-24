@@ -70,7 +70,7 @@ class Hornsby
   end
 
   def self.skip_tables
-    %w( schema_info )
+    %w( schema_info schema_migrations )
   end
 
   def self.copy_ivars(to, reload = false)
