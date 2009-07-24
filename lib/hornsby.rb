@@ -26,8 +26,8 @@ class Hornsby
     config.include(HornsbySpecHelper)
 
     config.before do
-      @@context = @@global_context.clone
-      @@executed_scenarios = Set.new(@@global_executed_scenarios)
+      Hornsby.send(:class_variable_set, '@@context', Hornsby.send(:class_variable_get, '@@global_context').clone)
+      Hornsby.send(:class_variable_set, '@@executed_scenarios', Set.new(Hornsby.send(:class_variable_get, '@@global_executed_scenarios')))
       Hornsby.copy_ivars(self, true)
       ActiveRecord::Base.connection.increment_open_transactions
       ActiveRecord::Base.connection.transaction_joinable = false
