@@ -1,5 +1,5 @@
 GEM_NAME = "hornsby"
-GEM_VERSION = "0.2.4"
+GEM_VERSION = "0.2.5"
 
 Gem::Specification.new do |s|
   s.name = GEM_NAME
@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.summary = "Fixtures replacement with scenarios"
   s.files = %w{
     lib/hornsby.rb
+    lib/hornsby_context.rb
     lib/tasks/hornsby_tasks.rake
     README.rdoc
     LICENSE
