@@ -61,8 +61,9 @@ class Hornsby
     self.new(scenario, &block)
   end
 
-  def self.delete_tables
-    tables.each { |t| ActiveRecord::Base.connection.delete(@@delete_sql % t)  }
+  def self.delete_tables(*tbl)
+    tbl = tables if tbl.blank?
+    tbl.each { |t| ActiveRecord::Base.connection.delete(@@delete_sql % t)  }
   end
 
   def self.tables
@@ -140,7 +141,7 @@ module HornsbySpecHelper
     Hornsby.copy_ivars(self)
   end
 
-  def hornsby_clear
-    Hornsby.delete_tables
+  def hornsby_clear(*tables)
+    Hornsby.delete_tables(*tables)
   end
 end

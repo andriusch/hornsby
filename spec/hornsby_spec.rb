@@ -79,6 +79,13 @@ describe Hornsby, 'with preloaded cherry scenario' do
     hornsby_clear
     Fruit.count.should == 0
   end
+
+  it "should clear only tables passed" do
+    Tree.create!(:name => 'oak')
+    hornsby_clear :fruits
+    Tree.count.should == 1
+    Fruit.count.should == 0
+  end
 end
 
 describe Hornsby, 'with many apples scenario' do
