@@ -3,4 +3,8 @@ ActiveRecord::Schema.define(:version => 0) do
     t.string :species
     t.integer :average_diameter
   end
+
+  create_table :trees, :force => true do |t|
+    t.string :name
+  end
 end

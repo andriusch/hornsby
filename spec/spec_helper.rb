@@ -18,6 +18,7 @@ load(File.join("db", "schema.rb"))
 require 'spec/autorun'
 require '../lib/hornsby'
 require 'db/fruit'
+require 'db/tree'
 
 Spec::Runner.configure do |config|
   Hornsby.configure_rspec(config, :filename => File.join('hornsby_scenario.rb'), :scenarios => :big_cherry)
