@@ -2,3 +2,4 @@
 *.gem
 spec/db/database.yml
 spec/debug.log
+test/debug.log

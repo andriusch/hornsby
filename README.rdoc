@@ -72,6 +72,8 @@ Lastly you could use it as plugin:
 
     ruby script/plugin install git://github.com/sinsiliux/hornsby.git
 
+=== RSpec
+
 Add the following to spec_helper.rb
 
     Spec::Runner.configure do |config|
@@ -83,6 +85,25 @@ Add the following to spec_helper.rb
 configure_rspec supports two parameters:
 * filename - file with hornsby scenarios (by default Rails.root/spec/hornsby_scenarios.rb)
 * scenarios - list of hornsby scenarios that should be preloaded (available in all tests, never reloaded so they're much faster)
+
+=== Test::Unit
+
+Add the following lines to test_helper.rb
+
+    Hornsby.load(:filename => File.join('..', 'spec', 'hornsby_scenario.rb'), :scenarios => :preloaded_scenario)
+    class ActiveSupport::TestCase
+      include HornsbyHelper
+
+      def setup
+        Hornsby.setup(self)
+      end
+
+      def teardown
+        Hornsby.teardown
+      end
+    end
+
+Hornsby.load supports same options as configure_rspec.
 
 == Advanced Usage
 

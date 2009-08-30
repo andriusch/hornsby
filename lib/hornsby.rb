@@ -18,27 +18,41 @@ class Hornsby
   @@context = nil
 
   def self.configure_rspec(config, options = {})
-    load(options[:filename])
+    load(options)
 
-    @@context = @@global_context
-    @@global_scenarios = Hornsby.build(options[:scenarios]) if options[:scenarios]
-    @@global_executed_scenarios = @@executed_scenarios.to_a
-
-    config.include(HornsbySpecHelper)
-
+    config.include(HornsbyHelper)
     config.before do
-      Hornsby.send(:class_variable_set, '@@context', Hornsby.send(:class_variable_get, '@@global_context').clone)
-      Hornsby.executed_scenarios = Set.new(Hornsby.send(:class_variable_get, '@@global_executed_scenarios'))
-      Hornsby.copy_ivars(self, true)
-      ActiveRecord::Base.connection.increment_open_transactions
-      ActiveRecord::Base.connection.transaction_joinable = false
-      ActiveRecord::Base.connection.begin_db_transaction
+      Hornsby.setup(self)
     end
-
     config.after do
-      ActiveRecord::Base.connection.rollback_db_transaction
-      ActiveRecord::Base.connection.decrement_open_transactions
+      Hornsby.teardown
     end
+  end
+
+  def self.configure_test(config, options)
+    load(options)
+    
+    config.send(:include, HornsbyHelper)
+    config.setup do
+      Hornsby.setup(self)
+    end
+    config.teardown do
+      Hornsby.teardown
+    end
+  end
+
+  def self.setup(current_context)
+    @@context = @@global_context.clone
+    @@executed_scenarios = Set.new(@@global_executed_scenarios)
+    copy_ivars(current_context, true)
+    ActiveRecord::Base.connection.increment_open_transactions
+    ActiveRecord::Base.connection.transaction_joinable = false
+    ActiveRecord::Base.connection.begin_db_transaction
+  end
+
+  def self.teardown
+    ActiveRecord::Base.connection.rollback_db_transaction
+    ActiveRecord::Base.connection.decrement_open_transactions
   end
 
   def self.build(*names)
@@ -50,12 +64,16 @@ class Hornsby
   def self.[](name)
   end
 
-  def self.load(scenarios_file=nil)
+  def self.load(options = {})
     return unless @@scenarios.empty?
 
     delete_tables
-    scenarios_file ||= File.join(framework_root, 'spec', 'hornsby_scenarios.rb')
+    scenarios_file = options[:filename] || File.join(framework_root, 'spec', 'hornsby_scenarios.rb')
     self.module_eval File.read(scenarios_file)
+
+    @@context = @@global_context
+    @@global_scenarios = Hornsby.build(options[:scenarios]) if options[:scenarios]
+    @@global_executed_scenarios = @@executed_scenarios.to_a
   end
 
   def self.scenario(scenario, &block)
@@ -136,7 +154,7 @@ class Hornsby
 end
 
 
-module HornsbySpecHelper
+module HornsbyHelper
   def hornsby_scenario(*names)
     Hornsby.build(*names)
     Hornsby.copy_ivars(self)
