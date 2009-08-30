@@ -1,5 +1,5 @@
 GEM_NAME = "hornsby"
-GEM_VERSION = "0.2.6"
+GEM_VERSION = "0.3.0"
 
 Gem::Specification.new do |s|
   s.name = GEM_NAME
@@ -26,6 +26,5 @@ Gem::Specification.new do |s|
     spec/db/schema.rb
   }
   s.has_rdoc = false
-  s.add_dependency("rspec", ">= 1.2.0")
   s.add_dependency("activerecord", ">= 2.0.0")
 end
