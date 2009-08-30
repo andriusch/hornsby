@@ -48,10 +48,14 @@ All scenarios are run only once, no matter how many times they were called, mean
 duplicating data.
 
 There's also a possibility to delete preloaded data with hornsby_clear. When called without arguments it will drop all data.
-You can also pass it table names, that will be cleared of any data.
+You can also pass it table names, that will be cleared of any data. Beware that any scenarios already executed will still be
+marked as executed, so you won't be able to execute them again. If you want to execute those scenarios later in test, you
+can pass :undo option with list of scenarios to mark as not executed or :all if you want to mark that no scenario has been executed.
 
     hornsby_clear :fruits, :trees # Deletes trees and fruits tables
     hornsby_clear # Deletes all data except tables that are defined by Hornsby.skip_tables
+    hornsby_clear :fruits, :undo => :apples # Deletes fruits table and marks :apples scenario as not executed
+    hornsby_clear :undo => :all # Deletes all tables and marks all scenario as not executed (fresh start)
 
 == Setup
 

@@ -78,6 +78,10 @@ describe Hornsby do
   end
 
   describe 'hornsby_clear' do
+    before do
+      hornsby_scenario :just_apple
+    end
+
     it "should clear scenarios when calling hornsby_clear" do
       hornsby_clear
       Fruit.count.should == 0
@@ -88,6 +92,28 @@ describe Hornsby do
       hornsby_clear :fruits
       Tree.count.should == 1
       Fruit.count.should == 0
+    end
+
+    it "should mark scenarios as undone when passed :undone option" do
+      hornsby_scenario :fruit
+      hornsby_clear :undo => [:just_apple]
+      Fruit.count.should == 0
+      hornsby_scenario :fruit
+      Fruit.count.should == 1
+    end
+
+    it "should mark all scenarios as undone when passed :undone option as :all" do
+      hornsby_scenario :fruit
+      hornsby_clear :undo => :all
+      Fruit.count.should == 0
+      hornsby_scenario :fruit
+      Fruit.count.should == 2
+    end
+
+    it "should raise error when not executed scenarios passed to :undo option" do
+      lambda {
+        hornsby_clear :undo => :just_orange
+      }.should raise_error(ArgumentError)
     end
   end
 

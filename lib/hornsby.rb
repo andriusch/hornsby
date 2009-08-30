@@ -8,6 +8,7 @@ class Hornsby
   end
 
   cattr_reader :scenarios
+  cattr_accessor :executed_scenarios
   # @@namespaces = {}
   @@scenarios = {}
   @@executed_scenarios = Set.new
@@ -27,7 +28,7 @@ class Hornsby
 
     config.before do
       Hornsby.send(:class_variable_set, '@@context', Hornsby.send(:class_variable_get, '@@global_context').clone)
-      Hornsby.send(:class_variable_set, '@@executed_scenarios', Set.new(Hornsby.send(:class_variable_get, '@@global_executed_scenarios')))
+      Hornsby.executed_scenarios = Set.new(Hornsby.send(:class_variable_get, '@@global_executed_scenarios'))
       Hornsby.copy_ivars(self, true)
       ActiveRecord::Base.connection.increment_open_transactions
       ActiveRecord::Base.connection.transaction_joinable = false
@@ -61,9 +62,9 @@ class Hornsby
     self.new(scenario, &block)
   end
 
-  def self.delete_tables(*tbl)
-    tbl = tables if tbl.blank?
-    tbl.each { |t| ActiveRecord::Base.connection.delete(@@delete_sql % t)  }
+  def self.delete_tables(*args)
+    args = tables if args.blank?
+    args.each { |t| ActiveRecord::Base.connection.delete(@@delete_sql % t)  }
   end
 
   def self.tables
@@ -141,7 +142,18 @@ module HornsbySpecHelper
     Hornsby.copy_ivars(self)
   end
 
-  def hornsby_clear(*tables)
-    Hornsby.delete_tables(*tables)
+  def hornsby_clear(*args)
+    options = args.extract_options!
+    Hornsby.delete_tables(*args)
+
+    if options[:undo] == :all
+      Hornsby.executed_scenarios.clear
+    else
+      undo = [options[:undo]].flatten.compact
+      unless (not_found = undo - Hornsby.executed_scenarios.to_a).blank?
+        raise(ArgumentError, "Scenario(s) #{not_found} not found")
+      end
+      Hornsby.executed_scenarios -= undo
+    end
   end
 end
