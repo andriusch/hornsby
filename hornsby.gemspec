@@ -24,6 +24,8 @@ Gem::Specification.new do |s|
     spec/db/fruit.rb
     spec/db/database.yml.example
     spec/db/schema.rb
+    test/test_helper.rb
+    test/hornsby_test.rb
   }
   s.has_rdoc = false
   s.add_dependency("activerecord", ">= 2.0.0")
