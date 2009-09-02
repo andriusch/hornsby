@@ -1,6 +1,11 @@
 require File.join(File.dirname(__FILE__), 'hornsby/context')
 require File.join(File.dirname(__FILE__), 'hornsby/helper')
 require File.join(File.dirname(__FILE__), 'hornsby/errors')
+if defined? Spec
+  require File.join(File.dirname(__FILE__), 'hornsby/rspec_extensions')
+else
+  require File.join(File.dirname(__FILE__), 'hornsby/test_unit_extensions')
+end
 
 class Hornsby
   SCENARIO_FILES = [nil, 'spec', 'test'].product(['hornsby_scenarios', 'hornsby_scenario']).map do |path|
@@ -25,27 +30,7 @@ class Hornsby
   end
 
   def self.configure_rspec(config, options = {})
-    load(options)
-
-    config.include(Hornsby::Helper)
-    config.before do
-      Hornsby.setup(self)
-    end
-    config.after do
-      Hornsby.teardown
-    end
-  end
-
-  def self.configure_test(config, options)
-    load(options)
-    
-    config.send(:include, Hornsby::Helper)
-    config.setup do
-      Hornsby.setup(self)
-    end
-    config.teardown do
-      Hornsby.teardown
-    end
+    raise '### This is deprecated! Please use config.enable_hornsby instead of Hornsby.configure_rspec(config)'
   end
 
   def self.setup(current_context)

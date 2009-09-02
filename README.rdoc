@@ -87,6 +87,12 @@ Lastly you could use it as plugin:
 
     ruby script/plugin install git://github.com/sinsiliux/hornsby.git
 
+Hornsby scenarios is activated by calling enable_hornsby. For specifics on how to call that in your testing framework see a little lower.
+enable_hornsby supports these parameters:
+* root - custom framework root if automatic detection fails for some reason (eg. not rails/merb project)
+* filename - custom files pattern with hornsby scenarios
+* scenarios - list of hornsby scenarios that should be preloaded (available in all tests, never reloaded so they're much faster)
+
 === RSpec
 
 Add the following to spec_helper.rb
@@ -94,32 +100,18 @@ Add the following to spec_helper.rb
     Spec::Runner.configure do |config|
       ...
   
-      Hornsby.configure_rspec(config, :filename => 'scenarios.rb', :scenarios => :preloaded_scenario)
+      config.enable_hornsby :filename => 'scenarios.rb', :scenarios => :preloaded_scenario
     end
-
-configure_rspec supports these parameters:
-* root - custom framework root if automatic detection fails for some reason (eg. not rails/merb project)
-* filename - custom files pattern with hornsby scenarios
-* scenarios - list of hornsby scenarios that should be preloaded (available in all tests, never reloaded so they're much faster)
 
 === Test::Unit
 
 Add the following lines to test_helper.rb
 
-    Hornsby.load(:filename => File.join('..', 'spec', 'hornsby_scenario.rb'), :scenarios => :preloaded_scenario)
     class ActiveSupport::TestCase
-      include HornsbyHelper
+      ...
 
-      def setup
-        Hornsby.setup(self)
-      end
-
-      def teardown
-        Hornsby.teardown
-      end
+      enable_hornsby
     end
-
-Hornsby.load supports same options as configure_rspec.
 
 == Advanced Usage
 
@@ -148,7 +140,6 @@ If you'd like simply to load your scenarios into a database, use the rake task l
 * Add scenario namespaces for better organisation.
 * Add ability to revert one scenario.
 * Add preloading scenarios for whole block of tests.
-* Add easier configuration.
 
 == Credits
 

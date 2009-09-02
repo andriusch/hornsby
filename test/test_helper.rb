@@ -21,15 +21,6 @@ require spec_dir + '/../lib/hornsby'
 require spec_dir + '/db/fruit'
 require spec_dir + '/db/tree'
 
-Hornsby.load(:filename => File.join('..', 'spec', 'hornsby_scenario.rb'), :scenarios => :big_cherry)
 class ActiveSupport::TestCase
-  include Hornsby::Helper
-
-  def setup
-    Hornsby.setup(self)
-  end
-
-  def teardown
-    Hornsby.teardown
-  end
+  enable_hornsby :root => File.join(File.dirname(__FILE__), '..'), :scenarios => :big_cherry
 end
