@@ -1,5 +1,5 @@
 GEM_NAME = "hornsby"
-GEM_VERSION = "0.3.0"
+GEM_VERSION = "0.4.0"
 
 Gem::Specification.new do |s|
   s.name = GEM_NAME
@@ -14,6 +14,8 @@ Gem::Specification.new do |s|
     lib/hornsby/context.rb
     lib/hornsby/helper.rb
     lib/hornsby/errors.rb
+    lib/hornsby/rspec_extensions.rb
+    lib/hornsby/test_unit_extensions.rb
     lib/tasks/hornsby_tasks.rake
     README.rdoc
     LICENSE
