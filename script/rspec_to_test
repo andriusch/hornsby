@@ -19,7 +19,7 @@ data.gsub!(/ be_([^\(\)]*)/, '.\1?')
 data.gsub!(/ have\((\d+)\)\.items/, '.size == \1')
 
 data.gsub!(/^(\s+)describe/, '\1context')
-data.gsub!(/^(\s+)it "(should )?/, '\1should "')
+data.gsub!(/^(\s+)it (["'])(should )?/, '\1should \2')
 data.gsub!(/^(\s+)before.*do/, '\1setup do')
 
 File.open('test/hornsby_test.rb', 'w') {|f| f.write(data)}
