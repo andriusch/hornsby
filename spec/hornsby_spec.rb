@@ -162,7 +162,7 @@ describe Hornsby do
       }.should raise_error(Hornsby::ScenarioNotFoundError, "Scenario(s) not found 'not_existing'")
     end
     
-    it 'should raise ScenarioNotFoundError when scenario could not be found' do
+    it 'should raise ScenarioNotFoundError when scenario parent could not be found' do
       lambda {
         hornsby_scenario :parent_not_existing
       }.should raise_error(Hornsby::ScenarioNotFoundError, "Scenario(s) not found 'not_existing'")
