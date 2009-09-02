@@ -5,6 +5,8 @@ class Hornsby
       Hornsby.copy_ivars(self)
     end
 
+    alias :hornsby_scenarios :hornsby_scenario 
+
     def hornsby_clear(*args)
       options = args.extract_options!
       Hornsby.delete_tables(*args)
