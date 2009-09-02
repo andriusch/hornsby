@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/test_helper'
 require 'shoulda'
 
-class HornsbyTestTest < ActiveSupport::TestCase
+class HornsbyTest < ActiveSupport::TestCase
   context "with just_apple scenario" do
     setup do
       hornsby_scenario :just_apple
@@ -153,6 +153,26 @@ class HornsbyTestTest < ActiveSupport::TestCase
       end
       assert(!(@apple.reload.nil?))
       assert(Fruit.find_by_species('orange').nil?)
+    end
+  end
+
+  context 'errors' do
+    should 'raise ScenarioNotFoundError when scenario could not be found' do
+      assert_raise(Hornsby::ScenarioNotFoundError, "Scenario(s) not found 'not_existing'") do
+        hornsby_scenario :not_existing
+      end
+    end
+    
+    should 'raise ScenarioNotFoundError when scenario parent could not be found' do
+      assert_raise(Hornsby::ScenarioNotFoundError, "Scenario(s) not found 'not_existing'") do
+        hornsby_scenario :parent_not_existing
+      end
+    end
+
+    should 'raise TypeError when scenario name is not symbol or string' do
+      assert_raise(TypeError, "Pass scenarios names as strings or symbols only, cannot build scenario '1'") do
+        Hornsby.new(1)
+      end
     end
   end
 
