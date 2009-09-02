@@ -1,5 +1,6 @@
 require File.join(File.dirname(__FILE__), 'hornsby/context')
 require File.join(File.dirname(__FILE__), 'hornsby/helper')
+require File.join(File.dirname(__FILE__), 'hornsby/errors')
 
 class Hornsby
   @@delete_sql = "DELETE FROM %s"
@@ -57,7 +58,7 @@ class Hornsby
   end
 
   def self.build(*names)
-    scenarios = names.map {|name| @@scenarios[name.to_sym] or raise NameError, "scenario #{name} not found"}
+    scenarios = names.map {|name| @@scenarios[name.to_sym] or raise ScenarioNotFoundError, name}
 
     scenarios.each {|s| s.build}
   end
@@ -98,21 +99,21 @@ class Hornsby
   attr_reader :scenario
 
   def initialize(scenario, &block)
-    case scenario
-      when Hash
-        parents = scenario.values.first
-        @parents = Array === parents ? parents : [parents]
-        scenario = scenario.keys.first
-      when Symbol, String
-        @parents = []
-      else
-        raise NameError, "I don't know how to build `#{scenario.inspect}'"
-    end
-
-    @scenario = scenario.to_sym
-    @block    = block
+    @scenario, @parents = parse_name(scenario)
+    @block = block
 
     @@scenarios[@scenario] = self
+  end
+
+  def parse_name(name)
+    case name
+      when Hash
+        return name.keys.first.to_sym, [name.values.first].flatten.map{|sc| parse_name(sc).first}
+      when Symbol, String
+        return name.to_sym, []
+      else
+        raise TypeError, "Pass scenarios names as strings or symbols only, cannot build scenario '#{name.inspect}'"
+    end  
   end
 
   def say(*messages)
@@ -132,7 +133,7 @@ class Hornsby
 
   def build_parent_scenarios(context)
     @parents.each do |p|
-      parent = self.class.scenarios[p] or raise NameError, "parent scenario [#{p}] not found!"
+      parent = self.class.scenarios[p] or raise ScenarioNotFoundError, p
 
       parent.build_parent_scenarios(context)
       parent.build_scenario(context)

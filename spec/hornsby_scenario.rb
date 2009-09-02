@@ -32,6 +32,9 @@ scenario(:cherry_basket => [:big_cherry, :cherry]) do
   @basket = [@cherry, @big_cherry]
 end
 
+
+scenario :parent_not_existing => :not_existing
+
 # Hornsby.namespace(:pitted_fruit) do
 #   scenario(:peach) do
 #     @peach = Fruit.create! :species => 'peach'

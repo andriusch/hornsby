@@ -155,6 +155,26 @@ describe Hornsby do
     end
   end
 
+  describe 'errors' do
+    it 'should raise ScenarioNotFoundError when scenario could not be found' do
+      lambda {
+        hornsby_scenario :not_existing
+      }.should raise_error(Hornsby::ScenarioNotFoundError, "Scenario(s) not found 'not_existing'")
+    end
+    
+    it 'should raise ScenarioNotFoundError when scenario could not be found' do
+      lambda {
+        hornsby_scenario :parent_not_existing
+      }.should raise_error(Hornsby::ScenarioNotFoundError, "Scenario(s) not found 'not_existing'")
+    end
+
+    it 'should raise TypeError when scenario name is not symbol or string' do
+      lambda {
+        Hornsby.new(1)
+      }.should raise_error(TypeError, "Pass scenarios names as strings or symbols only, cannot build scenario '1'")
+    end
+  end
+
 #describe "with pitted namespace" do
 #  before do
 #    Hornsby.build('pitted:peach').copy_ivars(self)

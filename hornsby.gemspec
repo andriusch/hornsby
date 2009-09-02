@@ -13,6 +13,7 @@ Gem::Specification.new do |s|
     lib/hornsby.rb
     lib/hornsby/context.rb
     lib/hornsby/helper.rb
+    lib/hornsby/errors.rb
     lib/tasks/hornsby_tasks.rake
     README.rdoc
     LICENSE
