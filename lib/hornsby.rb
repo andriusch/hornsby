@@ -1,4 +1,5 @@
-require File.join(File.dirname(__FILE__), 'hornsby_context')
+require File.join(File.dirname(__FILE__), 'hornsby/context')
+require File.join(File.dirname(__FILE__), 'hornsby/helper')
 
 class Hornsby
   @@delete_sql = "DELETE FROM %s"
@@ -14,13 +15,13 @@ class Hornsby
   @@executed_scenarios = Set.new
   @@global_executed_scenarios = []
 
-  @@global_context = HornsbyContext
+  @@global_context = Hornsby::Context
   @@context = nil
 
   def self.configure_rspec(config, options = {})
     load(options)
 
-    config.include(HornsbyHelper)
+    config.include(Hornsby::Helper)
     config.before do
       Hornsby.setup(self)
     end
@@ -32,7 +33,7 @@ class Hornsby
   def self.configure_test(config, options)
     load(options)
     
-    config.send(:include, HornsbyHelper)
+    config.send(:include, Hornsby::Helper)
     config.setup do
       Hornsby.setup(self)
     end
@@ -56,12 +57,9 @@ class Hornsby
   end
 
   def self.build(*names)
-    scenarios = names.map {|name| @@scenarios[name.to_sym] or raise "scenario #{name} not found"}
+    scenarios = names.map {|name| @@scenarios[name.to_sym] or raise NameError, "scenario #{name} not found"}
 
     scenarios.each {|s| s.build}
-  end
-
-  def self.[](name)
   end
 
   def self.load(options = {})
@@ -108,7 +106,7 @@ class Hornsby
       when Symbol, String
         @parents = []
       else
-        raise "I don't know how to build `#{scenario.inspect}'"
+        raise NameError, "I don't know how to build `#{scenario.inspect}'"
     end
 
     @scenario = scenario.to_sym
@@ -134,7 +132,7 @@ class Hornsby
 
   def build_parent_scenarios(context)
     @parents.each do |p|
-      parent = self.class.scenarios[p] or raise "parent scenario [#{p}] not found!"
+      parent = self.class.scenarios[p] or raise NameError, "parent scenario [#{p}] not found!"
 
       parent.build_parent_scenarios(context)
       parent.build_scenario(context)
@@ -145,33 +143,10 @@ class Hornsby
     yield
   rescue StandardError => error
     puts
-    say "There was an error building scenario `#{@scenario}'", error.inspect
+    say "There was an error building scenario '#{@scenario}'", error.inspect
     puts
     puts error.backtrace
     puts
     raise error
-  end
-end
-
-
-module HornsbyHelper
-  def hornsby_scenario(*names)
-    Hornsby.build(*names)
-    Hornsby.copy_ivars(self)
-  end
-
-  def hornsby_clear(*args)
-    options = args.extract_options!
-    Hornsby.delete_tables(*args)
-
-    if options[:undo] == :all
-      Hornsby.executed_scenarios.clear
-    else
-      undo = [options[:undo]].flatten.compact
-      unless (not_found = undo - Hornsby.executed_scenarios.to_a).blank?
-        raise(ArgumentError, "Scenario(s) #{not_found} not found")
-      end
-      Hornsby.executed_scenarios -= undo
-    end
   end
 end

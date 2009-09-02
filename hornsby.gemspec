@@ -11,7 +11,8 @@ Gem::Specification.new do |s|
   s.summary = "Fixtures replacement with scenarios"
   s.files = %w{
     lib/hornsby.rb
-    lib/hornsby_context.rb
+    lib/hornsby/context.rb
+    lib/hornsby/helper.rb
     lib/tasks/hornsby_tasks.rake
     README.rdoc
     LICENSE

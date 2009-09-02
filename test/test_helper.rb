@@ -23,7 +23,7 @@ require spec_dir + '/db/tree'
 
 Hornsby.load(:filename => File.join('..', 'spec', 'hornsby_scenario.rb'), :scenarios => :big_cherry)
 class ActiveSupport::TestCase
-  include HornsbyHelper
+  include Hornsby::Helper
 
   def setup
     Hornsby.setup(self)
