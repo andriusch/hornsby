@@ -3,11 +3,12 @@ require File.join(File.dirname(__FILE__), 'hornsby/helper')
 require File.join(File.dirname(__FILE__), 'hornsby/errors')
 
 class Hornsby
-  @@delete_sql = "DELETE FROM %s"
+  SCENARIO_FILES = [nil, 'spec', 'test'].product(['hornsby_scenarios', 'hornsby_scenario']).map do |path|
+    path = File.join(*path.compact)
+    ["#{path}.rb", File.join(path, "*.rb")]
+  end.flatten
 
-  def self.framework_root
-    RAILS_ROOT rescue Rails.root rescue Merb.root rescue ''
-  end
+  @@delete_sql = "DELETE FROM %s"
 
   cattr_reader :scenarios
   cattr_accessor :executed_scenarios
@@ -18,6 +19,10 @@ class Hornsby
 
   @@global_context = Hornsby::Context
   @@context = nil
+
+  def self.framework_root
+    @@framework_root ||= RAILS_ROOT rescue Rails.root rescue Merb.root rescue nil
+  end
 
   def self.configure_rspec(config, options = {})
     load(options)
@@ -67,12 +72,26 @@ class Hornsby
     return unless @@scenarios.empty?
 
     delete_tables
-    scenarios_file = options[:filename] || File.join(framework_root, 'spec', 'hornsby_scenarios.rb')
-    self.module_eval File.read(scenarios_file)
+    @@framework_root = options[:root] if options[:root]
+    load_scenarios_files(options[:filename] || SCENARIO_FILES)
 
     @@context = @@global_context
     @@global_scenarios = Hornsby.build(options[:scenarios]) if options[:scenarios]
     @@global_executed_scenarios = @@executed_scenarios.to_a
+  end
+
+  def self.load_scenarios_files(*patterns)
+    patterns.flatten!
+    patterns.collect! {|pattern| File.join(framework_root, pattern)} if framework_root
+    
+    patterns.each do |pattern|
+      unless (files = Dir.glob(pattern)).empty?
+        files.each{|f| self.module_eval File.read(f)}
+        return
+      end
+    end
+    
+    raise "Scenarios file not found! Put scenarios in #{patterns.join(' or ')} or pass custom filename with :filename option"
   end
 
   def self.scenario(scenario, &block)
@@ -133,7 +152,7 @@ class Hornsby
 
   def build_parent_scenarios(context)
     @parents.each do |p|
-      parent = self.class.scenarios[p] or raise ScenarioNotFoundError, p
+      parent = @@scenarios[p] or raise ScenarioNotFoundError, p
 
       parent.build_parent_scenarios(context)
       parent.build_scenario(context)

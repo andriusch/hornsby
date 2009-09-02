@@ -57,6 +57,21 @@ can pass :undo option with list of scenarios to mark as not executed or :all if 
     hornsby_clear :fruits, :undo => :apples # Deletes fruits table and marks :apples scenario as not executed
     hornsby_clear :undo => :all # Deletes all tables and marks all scenario as not executed (fresh start)
 
+Hornsby searches for scenario files in this particular order in Rails (Merb) root:
+* hornsby_scenarios.rb
+* hornsby_scenarios/*.rb
+* hornsby_scenario.rb
+* hornsby_scenario/*.rb
+* spec/hornsby_scenarios.rb
+* spec/hornsby_scenarios/*.rb
+* spec/hornsby_scenario.rb
+* spec/hornsby_scenario/*.rb
+* test/hornsby_scenarios.rb
+* test/hornsby_scenarios/*.rb
+* test/hornsby_scenario.rb
+* test/hornsby_scenario/*.rb
+You can pass :root option to override framework root and :filename option to pass custom filename pattern 
+
 == Setup
 
 The easiest way to install this gem for Ruby on Rails is just add this line to config/environment.rb (or config/environments/test.rb):
@@ -82,8 +97,9 @@ Add the following to spec_helper.rb
       Hornsby.configure_rspec(config, :filename => 'scenarios.rb', :scenarios => :preloaded_scenario)
     end
 
-configure_rspec supports two parameters:
-* filename - file with hornsby scenarios (by default Rails.root/spec/hornsby_scenarios.rb)
+configure_rspec supports these parameters:
+* root - custom framework root if automatic detection fails for some reason (eg. not rails/merb project)
+* filename - custom files pattern with hornsby scenarios
 * scenarios - list of hornsby scenarios that should be preloaded (available in all tests, never reloaded so they're much faster)
 
 === Test::Unit
