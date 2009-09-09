@@ -8,7 +8,7 @@ else
 end
 
 class Hornsby
-  SCENARIO_FILES = [nil, 'spec', 'test'].product(['hornsby_scenarios', 'hornsby_scenario']).map do |path|
+  SCENARIO_FILES = [[nil, "hornsby_scenarios"], [nil, "hornsby_scenario"], ["spec", "hornsby_scenarios"], ["spec", "hornsby_scenario"], ["test", "hornsby_scenarios"], ["test", "hornsby_scenario"]].map do |path|
     path = File.join(*path.compact)
     ["#{path}.rb", File.join(path, "*.rb")]
   end.flatten
