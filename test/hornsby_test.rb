@@ -2,6 +2,12 @@ require File.dirname(__FILE__) + '/test_helper'
 require 'shoulda'
 
 class HornsbyTest < ActiveSupport::TestCase
+  context "scenario files" do
+    should "be loaded from specified dirs" do
+      assert(Hornsby::SCENARIO_FILES == ["hornsby_scenarios.rb", "hornsby_scenarios/*.rb", "hornsby_scenario.rb", "hornsby_scenario/*.rb", "spec/hornsby_scenarios.rb", "spec/hornsby_scenarios/*.rb", "spec/hornsby_scenario.rb", "spec/hornsby_scenario/*.rb", "test/hornsby_scenarios.rb", "test/hornsby_scenarios/*.rb", "test/hornsby_scenario.rb", "test/hornsby_scenario/*.rb"])
+    end
+  end
+
   context "with just_apple scenario" do
     setup do
       hornsby_scenario :just_apple
@@ -186,3 +192,4 @@ class HornsbyTest < ActiveSupport::TestCase
 #  end
 #end
 end
+

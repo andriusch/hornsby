@@ -1,6 +1,12 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
 describe Hornsby do
+  describe "scenario files" do
+    it "should be loaded from specified dirs" do
+      Hornsby::SCENARIO_FILES.should == ["hornsby_scenarios.rb", "hornsby_scenarios/*.rb", "hornsby_scenario.rb", "hornsby_scenario/*.rb", "spec/hornsby_scenarios.rb", "spec/hornsby_scenarios/*.rb", "spec/hornsby_scenario.rb", "spec/hornsby_scenario/*.rb", "test/hornsby_scenarios.rb", "test/hornsby_scenarios/*.rb", "test/hornsby_scenario.rb", "test/hornsby_scenario/*.rb"]
+    end
+  end
+
   describe "with just_apple scenario" do
     before do
       hornsby_scenario :just_apple
@@ -185,3 +191,4 @@ describe Hornsby do
 #  end
 #end
 end
+

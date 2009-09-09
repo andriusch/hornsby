@@ -8,9 +8,11 @@ else
 end
 
 class Hornsby
-  SCENARIO_FILES = [[nil, "hornsby_scenarios"], [nil, "hornsby_scenario"], ["spec", "hornsby_scenarios"], ["spec", "hornsby_scenario"], ["test", "hornsby_scenarios"], ["test", "hornsby_scenario"]].map do |path|
-    path = File.join(*path.compact)
-    ["#{path}.rb", File.join(path, "*.rb")]
+  SCENARIO_FILES = [nil, "spec", "test"].map do |dir|
+    ["hornsby_scenarios", "hornsby_scenario"].map do |file|
+      path = File.join([dir, file].compact)
+      ["#{path}.rb", File.join(path, "*.rb")]
+    end
   end.flatten
 
   @@delete_sql = "DELETE FROM %s"
