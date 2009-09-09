@@ -21,5 +21,5 @@ require 'db/fruit'
 require 'db/tree'
 
 Spec::Runner.configure do |config|
-  Hornsby.configure_rspec(config, :root => File.join(spec_dir, '..'), :scenarios => :big_cherry)
+  config.enable_hornsby(:root => File.expand_path(File.join(spec_dir, '..')), :scenarios => :big_cherry)
 end
