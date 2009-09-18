@@ -8,7 +8,7 @@ end
 spec_dir = File.dirname(__FILE__)
 Dir.chdir spec_dir
 
-ActiveRecord::Base.logger = Logger.new("debug.log")
+ActiveRecord::Base.logger = Logger.new(File.join(spec_dir, "..", "debug.log"))
 
 databases = YAML::load(IO.read("db/database.yml"))
 db_info = databases[ENV["DB"] || "test"]
