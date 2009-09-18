@@ -13,7 +13,6 @@ ActiveRecord::Base.logger = Logger.new(File.join(spec_dir, "..", "debug.log"))
 databases = YAML::load(IO.read("db/database.yml"))
 db_info = databases[ENV["DB"] || "test"]
 ActiveRecord::Base.establish_connection(db_info)
-load(File.join("db", "schema.rb"))
 
 require 'spec/autorun'
 require '../lib/hornsby'
